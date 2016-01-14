@@ -23,7 +23,6 @@ import (
 
 // TideData stores a series of tide predictions
 type TideData struct {
-	// XMLName xml.Name `xml:"datainfo"`
 	Tides []Tide `xml:"data>item"`
 }
 
@@ -37,9 +36,6 @@ type Tide struct {
 	PredictionCm float64 `xml:"predictions_in_cm"`
 	HighLow      string  `xml:"highlow"`
 	DateTime     time.Time
-	Year         int64
-	Month        int64
-	DayNum       int64
 }
 
 // NOAA URL for Annual Tide XML
@@ -53,7 +49,7 @@ func main() {
 	// Start tide crawler
 	fmt.Println("Starting tide crawler...")
 
-	// Initialize tides to hold tide predictions
+	// Initialize tides to hold annual tide predictions
 	var tides TideData
 
 	// Fetch annual data and store as byte b
@@ -69,7 +65,7 @@ func main() {
 	decoder := xml.NewDecoder(c)
 	decoder.CharsetReader = charset.NewReaderLabel
 	if err := decoder.Decode(&tides); err != nil {
-		fmt.Println("decoder error:", err)
+		log.Fatal("decoder error:", err)
 	}
 
 	// Iterate over each Tide in Tides
