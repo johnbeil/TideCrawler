@@ -11,15 +11,25 @@ package main
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"golang.org/x/net/html/charset"
 )
+
+// Config stores database credentials
+type Config struct {
+	DatabaseURL      string
+	DatabaseUser     string
+	DatabasePassword string
+	DatabaseName     string
+}
 
 // TideData stores a series of tide predictions
 type TideData struct {
@@ -44,13 +54,36 @@ var url = "http://tidesandcurrents.noaa.gov/noaatidepredictions/NOAATidesFacade.
 // Timezone to use for all time formatting
 var timezone = "PST"
 
+// Global variable for database
+var db *sql.DB
+
 // Fetches Annual tide data and processes XML data
 func main() {
 	// Start tide crawler
 	fmt.Println("Starting tide crawler...")
 
+	// Load configuration
+	config := Config{}
+	loadConfig(&config)
+
 	// Initialize tides to hold annual tide predictions
 	var tides TideData
+
+	// Load database
+	dbinfo := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=disable",
+		config.DatabaseUser, config.DatabasePassword, config.DatabaseURL, config.DatabaseName)
+	var err error
+	db, err = sql.Open("postgres", dbinfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Check database connection
+	err = db.Ping()
+	if err != nil {
+		log.Fatal("Error: Could not establish connection with the database.", err)
+	}
 
 	// Fetch annual data and store as byte b
 	b := getDataFromURL(url)
@@ -88,11 +121,15 @@ func (t Tide) String() string {
 
 // Given Tide struct, returns formatted date time
 func formatTime(d Tide) time.Time {
+	// Concatenate tide prediction data into string
 	rawtime := d.Date + " " + d.Time + " " + timezone
+
+	// Parse time given concatenated rawtime
 	t, err := time.Parse("2006/01/02 3:04 PM PST", rawtime)
 	if err != nil {
 		log.Fatal("error processing rawtime:", err)
 	}
+	// set timezone for datetime and update time variable t
 	loc, err := time.LoadLocation("America/Los_Angeles")
 	if err != nil {
 		log.Fatal("error processing location", err)
@@ -119,4 +156,12 @@ func getDataFromURL(url string) (body []byte) {
 		fmt.Println("Fetch returned unanticipated HTTP code:", resp.Status)
 	}
 	return
+}
+
+// Loads database credentials from environment variables
+func loadConfig(config *Config) {
+	config.DatabaseUser = os.Getenv("DATABASEUSER")
+	config.DatabasePassword = os.Getenv("DATABASEPASSWORD")
+	config.DatabaseURL = os.Getenv("DATABASEURL")
+	config.DatabaseName = os.Getenv("DATABASENAME")
 }
