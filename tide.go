@@ -20,6 +20,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/lib/pq"
 	"golang.org/x/net/html/charset"
 )
 
