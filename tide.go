@@ -76,7 +76,7 @@ func main() {
 	var err error
 	db, err = sql.Open("postgres", dbinfo)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error opening database connection:", err)
 	}
 	defer db.Close()
 
@@ -166,7 +166,7 @@ func loadConfig(config *Config) {
 	config.DatabasePassword = os.Getenv("DATABASEPASSWORD")
 	config.DatabaseURL = os.Getenv("DATABASEURL")
 	config.DatabaseName = os.Getenv("DATABASENAME")
-	fmt.Println("config is:", config)
+	fmt.Println("Config is:", config)
 }
 
 // savePrediction inserts a tide struct into the database
