@@ -166,6 +166,7 @@ func loadConfig(config *Config) {
 	config.DatabasePassword = os.Getenv("DATABASEPASSWORD")
 	config.DatabaseURL = os.Getenv("DATABASEURL")
 	config.DatabaseName = os.Getenv("DATABASENAME")
+	fmt.Println("config is:", config)
 }
 
 // savePrediction inserts a tide struct into the database
