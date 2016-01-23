@@ -50,7 +50,7 @@ type Tide struct {
 }
 
 // NOAA URL for Annual Tide XML
-var url = "http://tidesandcurrents.noaa.gov/noaatidepredictions/NOAATidesFacade.jsp?datatype=Annual+XML&Stationid=9414275&text=datafiles"
+const noaaURL = "http://tidesandcurrents.noaa.gov/noaatidepredictions/NOAATidesFacade.jsp?datatype=Annual+XML&Stationid=9414275&text=datafiles"
 
 // Timezone to use for all time formatting
 var timezone = "PST"
@@ -87,7 +87,7 @@ func main() {
 	}
 
 	// Fetch annual data and store as byte b
-	b := getDataFromURL(url)
+	b := getDataFromURL(noaaURL)
 	// fmt.Println("b is:", reflect.TypeOf(b))
 
 	// Convert b from []uint8 to *bytes.Buffer
@@ -105,6 +105,7 @@ func main() {
 	// Iterate over each Tide in Tides
 	for _, d := range tides.Tides {
 		d.DateTime = formatTime(d)
+		saveTide(d)
 		// fmt.Printf("\t%s\n", d.DateTime)
 		fmt.Println(d)
 	}
@@ -165,4 +166,12 @@ func loadConfig(config *Config) {
 	config.DatabasePassword = os.Getenv("DATABASEPASSWORD")
 	config.DatabaseURL = os.Getenv("DATABASEURL")
 	config.DatabaseName = os.Getenv("DATABASENAME")
+}
+
+// savePrediction inserts a tide struct into the database
+func saveTide(t Tide) {
+	_, err := db.Exec("INSERT INTO tidedata(datetime, date, day, time, predictionft, predictioncm, highlow) VALUES($1, $2, $3, $4, $5, $6, $7)", t.DateTime, t.Date, t.Day, t.Time, t.PredictionFt, t.PredictionCm, t.HighLow)
+	if err != nil {
+		log.Fatal("Error saving tide:", err)
+	}
 }
