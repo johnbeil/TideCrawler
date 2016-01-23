@@ -71,8 +71,8 @@ func main() {
 	var tides TideData
 
 	// Load database
-	dbinfo := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=disable",
-		config.DatabaseUser, config.DatabasePassword, config.DatabaseURL, config.DatabaseName)
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
+		config.DatabaseUser, config.DatabasePassword, config.DatabaseName)
 	var err error
 	db, err = sql.Open("postgres", dbinfo)
 	if err != nil {
