@@ -2,10 +2,10 @@
 // Use of this source code is governed by the MIT License.
 // The MIT license can be found in the LICENSE file.
 
-// TideCrawler 0.1
+// TideCrawler 1.0
 // Obtains annual tide forecasts for NOAA Station 9414275
 // Parses each tide prediction
-// Saves observation to database - TO DO
+// Saves all predictions to database
 
 package main
 
@@ -118,7 +118,6 @@ func main() {
 	fmt.Println("Success. Number of items saved to tidedata table is:", len(tides.Tides))
 	// fmt.Println(tides.TideData)
 
-	fmt.Println("Shutting down TideCrawler...")
 }
 
 // Returns formatted tide data
