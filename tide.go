@@ -102,7 +102,13 @@ func main() {
 		log.Fatal("decoder error:", err)
 	}
 
-	// Iterate over each Tide in Tides
+	// Drop the existing database
+	dropDB()
+
+	// Create a new empty database
+	createDB()
+
+	// Iterate over each Tide in Tides and save in database
 	for _, d := range tides.Tides {
 		d.DateTime = formatTime(d)
 		saveTide(d)
@@ -132,11 +138,11 @@ func formatTime(d Tide) time.Time {
 		log.Fatal("error processing rawtime:", err)
 	}
 	// set timezone for datetime and update time variable t
-	loc, err := time.LoadLocation("America/Los_Angeles")
-	if err != nil {
-		log.Fatal("error processing location", err)
-	}
-	t = t.In(loc)
+	// loc, err := time.LoadLocation("America/Los_Angeles")
+	// if err != nil {
+	// 	log.Fatal("error processing location", err)
+	// }
+	// t = t.In(loc)
 	return t
 }
 
@@ -174,5 +180,19 @@ func saveTide(t Tide) {
 	_, err := db.Exec("INSERT INTO tidedata(datetime, date, day, time, predictionft, predictioncm, highlow) VALUES($1, $2, $3, $4, $5, $6, $7)", t.DateTime, t.Date, t.Day, t.Time, t.PredictionFt, t.PredictionCm, t.HighLow)
 	if err != nil {
 		log.Fatal("Error saving tide:", err)
+	}
+}
+func dropDB() {
+	_, err := db.Exec("DROP TABLE tidedata")
+	if err != nil {
+		log.Fatal("Error dropping table tidedata:", err)
+	}
+
+}
+
+func createDB() {
+	_, err := db.Exec("CREATE TABLE tidedata(uid serial NOT NULL, datetime timestamp, date varchar(16), day varchar (16), time varchar(16), predictionft real, predictioncm integer, highlow varchar (16));")
+	if err != nil {
+		log.Fatal("Error creating table tidedata:", err)
 	}
 }
