@@ -108,7 +108,8 @@ func main() {
 	// Create a new empty tidedata table
 	createTable()
 
-	// Iterate over each Tide in Tides and save in database
+	// Iterate over each Tide in Tides and insert into database
+	fmt.Println("Inserting predictions in database...")
 	for _, d := range tides.Tides {
 		d.DateTime = formatTime(d)
 		saveTide(d)
