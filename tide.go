@@ -102,11 +102,11 @@ func main() {
 		log.Fatal("decoder error:", err)
 	}
 
-	// Drop the existing database
-	dropDB()
+	// Drop the existing tidedata table
+	dropTable()
 
-	// Create a new empty database
-	createDB()
+	// Create a new empty tidedata table
+	createTable()
 
 	// Iterate over each Tide in Tides and save in database
 	for _, d := range tides.Tides {
@@ -182,17 +182,24 @@ func saveTide(t Tide) {
 		log.Fatal("Error saving tide:", err)
 	}
 }
-func dropDB() {
+
+// dropTable drops an existing table from the database
+func dropTable() {
 	_, err := db.Exec("DROP TABLE tidedata")
 	if err != nil {
 		log.Fatal("Error dropping table tidedata:", err)
+	} else {
+		fmt.Println("Dropped existing table tidedata...")
 	}
 
 }
 
-func createDB() {
+// createTable creates a new tidedata table in the database
+func createTable() {
 	_, err := db.Exec("CREATE TABLE tidedata(uid serial NOT NULL, datetime timestamp, date varchar(16), day varchar (16), time varchar(16), predictionft real, predictioncm integer, highlow varchar (16));")
 	if err != nil {
 		log.Fatal("Error creating table tidedata:", err)
+	} else {
+		fmt.Println("Created new table tidedata...")
 	}
 }
