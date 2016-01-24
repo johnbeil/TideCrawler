@@ -58,7 +58,7 @@ var timezone = "PST"
 // Global variable for database
 var db *sql.DB
 
-// Fetches Annual tide data and processes XML data
+// Fetches Annual tide data, parses XML data, prepares and saves to database.
 func main() {
 	// Start tide crawler
 	fmt.Println("Starting TideCrawler...")
@@ -138,6 +138,7 @@ func formatTime(d Tide) time.Time {
 		log.Fatal("error processing rawtime:", err)
 	}
 	// set timezone for datetime and update time variable t
+	// not used since server is in same timezone as NOAA Station 9414275
 	// loc, err := time.LoadLocation("America/Los_Angeles")
 	// if err != nil {
 	// 	log.Fatal("error processing location", err)
