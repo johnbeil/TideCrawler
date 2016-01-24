@@ -61,7 +61,7 @@ var db *sql.DB
 // Fetches Annual tide data and processes XML data
 func main() {
 	// Start tide crawler
-	fmt.Println("Starting tide crawler...")
+	fmt.Println("Starting TideCrawler...")
 
 	// Load configuration
 	config := Config{}
@@ -113,12 +113,12 @@ func main() {
 		d.DateTime = formatTime(d)
 		saveTide(d)
 		// fmt.Printf("\t%s\n", d.DateTime)
-		fmt.Println(d)
+		// fmt.Println(d)
 	}
-	fmt.Println("Number of items is:", len(tides.Tides))
+	fmt.Println("Success. Number of items saved to tidedata table is:", len(tides.Tides))
 	// fmt.Println(tides.TideData)
 
-	fmt.Println("Shutting down tide crawler...")
+	fmt.Println("Shutting down TideCrawler...")
 }
 
 // Returns formatted tide data
