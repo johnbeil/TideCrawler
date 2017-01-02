@@ -12,6 +12,7 @@ package main
 import (
 	"bytes"
 	"database/sql"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
@@ -24,12 +25,17 @@ import (
 	"golang.org/x/net/html/charset"
 )
 
-// Config stores database credentials
+// Config struct stores credentials contains some unused variables from BuoyBot
 type Config struct {
-	DatabaseURL      string
-	DatabaseUser     string
-	DatabasePassword string
-	DatabaseName     string
+	UserName         string `json:"UserName"`
+	ConsumerKey      string `json:"ConsumerKey"`
+	ConsumerSecret   string `json:"ConsumerSecret"`
+	Token            string `json:"Token"`
+	TokenSecret      string `json:"TokenSecret"`
+	DatabaseURL      string `json:"DatabaseUrl"`
+	DatabaseUser     string `json:"DatabaseUser"`
+	DatabasePassword string `json:"DatabasePassword"`
+	DatabaseName     string `json:"DatabaseName"`
 }
 
 // TideData stores a series of tide predictions
@@ -167,13 +173,16 @@ func getDataFromURL(url string) (body []byte) {
 	return
 }
 
-// Loads database credentials from environment variables
+// Given path to config.js file, loads credentials
 func loadConfig(config *Config) {
-	config.DatabaseUser = os.Getenv("DATABASEUSER")
-	config.DatabasePassword = os.Getenv("DATABASEPASSWORD")
-	config.DatabaseURL = os.Getenv("DATABASEURL")
-	config.DatabaseName = os.Getenv("DATABASENAME")
-	// fmt.Println("Config is:", config)
+	// Load path to config from CONFIGPATH environment variable
+	configpath := os.Getenv("CONFIGPATH")
+	file, _ := os.Open(configpath)
+	decoder := json.NewDecoder(file)
+	err := decoder.Decode(&config)
+	if err != nil {
+		log.Fatal("Error loading config.json:", err)
+	}
 }
 
 // savePrediction inserts a tide struct into the database
