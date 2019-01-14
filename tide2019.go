@@ -56,7 +56,7 @@ type Tide struct {
 }
 
 // NOAA URL for Annual Tide XML
-const noaaURL = "https://tidesandcurrents.noaa.gov/cgi-bin/predictiondownload.cgi?&stnid=9414275&threshold=&thresholdDirection=greaterThan&bdate=2018&timezone=LST/LDT&datum=MLLW&clock=12hour&type=xml&annual=true"
+const noaaURL = "https://tidesandcurrents.noaa.gov/cgi-bin/predictiondownload.cgi?&stnid=9414275&threshold=&thresholdDirection=greaterThan&bdate=2019&timezone=LST/LDT&datum=MLLW&clock=12hour&type=xml&annual=true"
 
 // Timezone to use for all time formatting
 var timezone = "PST"
